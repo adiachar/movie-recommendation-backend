@@ -7,6 +7,7 @@ import ast
 import os
 import asyncio
 import requests
+import gdown
 
 load_dotenv()
 
@@ -19,10 +20,8 @@ SIM_FILE_ID = os.getenv("moviesSimilarityPkl")
 
 def download_pickle_from_drive(file_id, filename):
     if not os.path.exists(filename):
-        url = f"https://drive.google.com/uc?export=download&id={file_id}"
-        r = requests.get(url)
-        with open(filename, "wb") as f:
-            f.write(r.content)
+        url = f"https://drive.google.com/uc?id={file_id}"
+        gdown.download(url, filename, quiet=False)
 
 download_pickle_from_drive(MOVIES_FILE_ID, "movies.pkl")
 download_pickle_from_drive(SIM_FILE_ID, "moviesSimilarity.pkl")
