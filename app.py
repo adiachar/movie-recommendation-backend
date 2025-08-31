@@ -15,7 +15,7 @@ app = Flask(__name__)
 CORS(app)
 
 MOVIES_FILE_ID = os.getenv("moviesPkl")
-SIM_FILE_ID = os.getenv("moviesSimilarityPkl-")
+SIM_FILE_ID = os.getenv("moviesSimilarityPkl")
 
 def download_pickle_from_drive(file_id, filename):
     if not os.path.exists(filename):
