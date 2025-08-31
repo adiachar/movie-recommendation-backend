@@ -6,7 +6,6 @@ import pickle
 import ast
 import os
 import asyncio
-import requests
 import gdown
 
 load_dotenv()
@@ -15,8 +14,9 @@ OMDB_API_KEY = os.getenv("OMDB_API_KEY")
 app = Flask(__name__)
 CORS(app)
 
-MOVIES_FILE_ID = os.getenv("moviesPkl")
-SIM_FILE_ID = os.getenv("moviesSimilarityPkl")
+MOVIES_FILE_ID = "1kgz30mE9wwYIB5XXXacs3wUVHOBLG92w"
+SIM_FILE_ID = "1vsBEd4jNuTzfxEZXz0fELEyUIbtp_Lu-"
+
 
 def download_pickle_from_drive(file_id, filename):
     if not os.path.exists(filename):
@@ -26,22 +26,23 @@ def download_pickle_from_drive(file_id, filename):
 download_pickle_from_drive(MOVIES_FILE_ID, "movies.pkl")
 download_pickle_from_drive(SIM_FILE_ID, "moviesSimilarity.pkl")
 
+
 with open("movies.pkl", "rb") as f:
     movies = pickle.load(f)
 
 with open("moviesSimilarity.pkl", "rb") as f:
     similarity = pickle.load(f)
 
+
 async def recommend(movie, count):
     recommended_movies = []
 
-    try: 
+    try:
         index_tpl = movies[movies['title'] == movie.lower()].index
         if index_tpl.empty:
             index_tpl = movies[movies['genres'].apply(lambda x: isinstance(x, (list, set, tuple)) and movie in x)].index
-
     except Exception as e:
-        print(e) 
+        print(e)
 
     if not index_tpl.empty:
         index = index_tpl[0]
@@ -53,19 +54,18 @@ async def recommend(movie, count):
                 current_movie = movies.iloc[x[0]].copy()
                 current_movie = current_movie.apply(lambda s: ast.literal_eval(s) if isinstance(s, str) and s.startswith('[') and s.endswith(']') else s)
                 current_movie["title"] = current_movie["title"].capitalize()
-                try: 
+                try:
                     url = f"http://www.omdbapi.com/?t={current_movie['title']}&apikey={OMDB_API_KEY}"
                     response = await client.get(url, timeout=10)
                     response.raise_for_status()
                     data = response.json()
                     current_movie["poster_url"] = data.get("Poster", None)
-
                 except Exception as e:
                     print("error", e)
                     current_movie["poster_url"] = None
-                
+
                 recommended_movies.append(current_movie.to_dict())
-                
+
     return recommended_movies
 
 @app.route("/recommend", methods=["POST"])
