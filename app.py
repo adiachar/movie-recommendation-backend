@@ -14,13 +14,13 @@ OMDB_API_KEY = os.getenv("OMDB_API_KEY")
 app = Flask(__name__)
 CORS(app)
 
+
 MOVIES_FILE_ID = "1kgz30mE9wwYIB5XXXacs3wUVHOBLG92w"
 SIM_FILE_ID = "1vsBEd4jNuTzfxEZXz0fELEyUIbtp_Lu-"
 
-
 def download_pickle_from_drive(file_id, filename):
     if not os.path.exists(filename):
-        url = f"https://drive.google.com/uc?id={file_id}"
+        url = f"https://drive.google.com/uc?id={file_id}"  # <-- correct format
         gdown.download(url, filename, quiet=False)
 
 download_pickle_from_drive(MOVIES_FILE_ID, "movies.pkl")
