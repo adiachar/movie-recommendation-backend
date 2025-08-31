@@ -6,12 +6,26 @@ import pickle
 import ast
 import os
 import asyncio
+import requests
 
 load_dotenv()
 
 OMDB_API_KEY = os.getenv("OMDB_API_KEY")
 app = Flask(__name__)
 CORS(app)
+
+MOVIES_FILE_ID = os.getenv("moviesPkl")
+SIM_FILE_ID = os.getenv("moviesSimilarityPkl-")
+
+def download_pickle_from_drive(file_id, filename):
+    if not os.path.exists(filename):
+        url = f"https://drive.google.com/uc?export=download&id={file_id}"
+        r = requests.get(url)
+        with open(filename, "wb") as f:
+            f.write(r.content)
+
+download_pickle_from_drive(MOVIES_FILE_ID, "movies.pkl")
+download_pickle_from_drive(SIM_FILE_ID, "moviesSimilarity.pkl")
 
 with open("movies.pkl", "rb") as f:
     movies = pickle.load(f)
