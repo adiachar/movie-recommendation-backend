@@ -20,7 +20,7 @@ SIM_FILE_ID = "1vsBEd4jNuTzfxEZXz0fELEyUIbtp_Lu-"
 
 def download_pickle_from_drive(file_id, filename):
     if not os.path.exists(filename):
-        url = f"https://drive.google.com/uc?id={file_id}"  # <-- correct format
+        url = f"https://drive.google.com/uc?id={file_id}" 
         gdown.download(url, filename, quiet=False)
 
 download_pickle_from_drive(MOVIES_FILE_ID, "movies.pkl")
@@ -68,7 +68,7 @@ async def recommend(movie, count):
 
     return recommended_movies
 
-@app.route("/recommend", methods=["POST"])
+@app.route("/recommend", methods=["GET"])
 def recommend_movies():
     data = request.json
     movie = data.get("movie")
