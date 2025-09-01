@@ -38,7 +38,7 @@ async def recommend(movie, count):
     recommended_movies = []
 
     try:
-        index_tpl = movies[movies['title'] == movie.lower()].index
+        index_tpl = movies[movies['title'].apply(lambda x: x.lower()) == movie.lower()].index
         if index_tpl.empty:
             index_tpl = movies[movies['genres'].apply(lambda x: isinstance(x, (list, set, tuple)) and movie in x)].index
     except Exception as e:
@@ -54,6 +54,7 @@ async def recommend(movie, count):
                 current_movie = movies.iloc[x[0]].copy()
                 current_movie = current_movie.apply(lambda s: ast.literal_eval(s) if isinstance(s, str) and s.startswith('[') and s.endswith(']') else s)
                 current_movie["title"] = current_movie["title"].capitalize()
+
                 try:
                     url = f"http://www.omdbapi.com/?t={current_movie['title']}&apikey={OMDB_API_KEY}"
                     response = await client.get(url, timeout=10)
