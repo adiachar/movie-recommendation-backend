@@ -56,16 +56,20 @@ async def recommend(movie, count):
 
     return recommended_movies
 
-@app.route("/recommend", methods=["GET"])
+@app.route("/recommend")
 def recommend_movies():
-    data = request.json
-    movie = data.get("movie")
-    count = data.get("count", 5)
+    movie = str(request.args.get('m'))
+    count = int(request.args.get('c'))
+    print(movie, count)
+
+    if not movie or not count:
+        return jsonify({"error": "No move or count defined!"}), 404
+    
     try:
         recommended_movies = asyncio.run(recommend(movie, count))
         if not recommended_movies:
             return jsonify({"error": "Movie not found"}), 404
-        return jsonify({"recommended_movies": recommended_movies})
+        return jsonify({"recommended_movies": recommended_movies}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
