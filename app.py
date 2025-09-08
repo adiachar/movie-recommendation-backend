@@ -12,7 +12,7 @@ load_dotenv()
 
 OMDB_API_KEY = os.getenv('OMDB_API_KEY')
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=['*'])
 
 
 with open('data/movies.pkl', 'rb') as f:
